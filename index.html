@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Thư Chuẩn - Viết email hoàn chỉnh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <script>
+    /* Áp dụng giao diện sáng/tối trước khi trang hiển thị để tránh bị nhấp nháy */
+    try {
+      document.documentElement.dataset.theme = JSON.parse(localStorage.getItem('tc_theme')) ||
+        (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    } catch (e) { document.documentElement.dataset.theme = 'light'; }
+  </script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== THANH ĐIỀU HƯỚNG ===== -->
+  <header class="topbar">
+    <a class="brand" href="#gioi-thieu">✉ <span id="siteTitle">Thư Chuẩn</span></a>
+    <nav>
+      <a href="#gioi-thieu">Giới thiệu</a>
+      <a href="#soan-thu">Viết email</a>
+      <a href="#mau">Email mẫu</a>
+      <a href="#y-kien">Phản hồi</a>
+    </nav>
+    <button id="themeBtn" class="theme-btn" type="button" title="Đổi giao diện sáng/tối"></button>
+  </header>
+
+  <!-- ===== PHẦN 1: GIỚI THIỆU ===== -->
+  <section id="gioi-thieu" class="hero">
+    <div class="hero-text">
+      <h1>Viết email đúng ngay từ dòng đầu tiên</h1>
+      <p>Dành cho sinh viên và người đi làm. Chọn chủ đề, điền vài thông tin và nhận một email hoàn chỉnh, lịch sự, sẵn sàng để gửi.</p>
+      <div class="actions">
+        <a class="btn" href="#soan-thu">Bắt đầu viết email</a>
+        <a class="btn ghost" href="#mau">Xem email mẫu</a>
+      </div>
+    </div>
+    <div class="hero-letter" aria-hidden="true">
+      <div class="stamp">✉</div>
+      <p><b>Kính gửi Cô Lan,</b></p>
+      <p>Em là Minh, lớp K45. Em xin phép nghỉ buổi học ngày mai vì bị ốm.</p>
+      <p>Em sẽ chủ động xin bài của các bạn. Em xin chân thành cảm ơn Cô.</p>
+      <p>Trân trọng,<br>Minh</p>
+    </div>
+  </section>
+
+  <section class="features">
+    <div><h3>Soạn theo chủ đề</h3><p>Xin nghỉ, gia hạn nộp bài, ứng tuyển, gửi báo cáo, hẹn gặp.</p></div>
+    <div><h3>Song ngữ Việt - Anh</h3><p>Một cú chạm để có bản tiếng Anh hoặc cả hai bản.</p></div>
+    <div><h3>Lịch sử và nhắc việc</h3><p>Lưu lại mọi thư, đặt ngày nhắc cho thư chưa gửi.</p></div>
+  </section>
+
+  <!-- ===== PHẦN 2: VIẾT EMAIL (có thanh lịch sử bên trái) ===== -->
+  <aside id="history" aria-label="Lịch sử email">
+    <h2>Lịch sử email</h2>
+    <ul id="historyList"></ul>
+  </aside>
+  <button id="historyBtn" type="button">Lịch sử</button>
+
+  <section id="soan-thu" class="compose">
+    <div class="inner">
+      <h2>Viết email của bạn</h2>
+      <div id="alert"></div>
+      <div class="editor">
+        <form class="panel" onsubmit="return false">
+          <div class="panel-head"><h3><span class="dot"></span>Thông tin ngữ cảnh</h3><small>Điền để thư tự cập nhật</small></div>
+          <div class="two">
+            <label>Chủ đề thư <select id="topic"></select></label>
+            <label>Ngôn ngữ
+              <select id="lang"><option value="vi">Tiếng Việt</option><option value="en">English</option><option value="both">Song ngữ</option></select>
+            </label>
+          </div>
+          <div class="two">
+            <label>Bạn là
+              <select id="role"><option value="sv">Sinh viên</option><option value="nv">Người đi làm</option></select>
+            </label>
+            <label>Ngày liên quan <input id="date" type="date"></label>
+          </div>
+          <div class="two">
+            <label>Người nhận (vd: Cô Lan) <input id="to"></label>
+            <label>Họ tên của bạn <input id="name"></label>
+          </div>
+          <label>Lớp / phòng ban / công ty <input id="org"></label>
+          <label>Lý do / nội dung chính <textarea id="detail" placeholder="vd: em bị ốm và có giấy khám bệnh"></textarea></label>
+        </form>
+
+        <div>
+          <div class="window">
+            <div class="window-bar"><i></i><i></i><i></i><code>email_output.eml</code><span class="badge">READY</span></div>
+            <div class="window-body">
+              <input id="subject" aria-label="Tiêu đề thư">
+              <textarea id="body" aria-label="Nội dung thư"></textarea>
+            </div>
+          </div>
+          <div class="panel send-panel">
+            <div class="panel-head"><h3><span class="dot"></span>Gửi thư ngay trên trang</h3><small id="gmailStatus">Chưa kết nối Gmail</small></div>
+            <div class="two">
+              <label>Gửi tới <input id="sendTo" placeholder="ten@example.com"></label>
+              <label>Cc (nếu có) <input id="sendCc" placeholder="a@x.com, b@y.com"></label>
+            </div>
+            <div class="actions">
+              <button class="btn" id="btnConnect" type="button">Kết nối Gmail</button>
+              <button class="btn" id="btnSend" type="button" hidden>Gửi thư</button>
+              <button class="btn ghost dark" id="btnTest" type="button" hidden>Gửi thử cho mình</button>
+              <button class="btn ghost dark" id="btnDisconnect" type="button" hidden>Ngắt kết nối</button>
+            </div>
+            <p id="sendMsg" class="note" role="status"></p>
+          </div>
+          <div class="actions">
+            <button class="btn" id="btnCopy" type="button">Sao chép thư</button>
+            <a class="btn ghost dark" id="mailLink" href="#">Mở trong ứng dụng mail</a>
+          </div>
+          <label>Nhắc tôi gửi hoặc theo dõi vào ngày <input id="remind" type="date"></label>
+          <div class="actions">
+            <button class="btn ghost dark" id="btnSave" type="button">Lưu vào lịch sử</button>
+            <span id="msg" role="status"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PHẦN 3: EMAIL MẪU ===== -->
+  <section id="mau">
+    <div class="inner">
+      <h2>Email mẫu</h2>
+      <p class="lead">Chọn một mẫu gần với bạn nhất, bấm “Dùng mẫu này” rồi chỉ cần đổi tên và chi tiết.</p>
+      <div class="tools">
+        <input id="search" type="search" placeholder="Tìm mẫu theo từ khóa" aria-label="Tìm mẫu">
+        <div id="chips"></div>
+      </div>
+      <div id="sampleGrid"></div>
+
+      <details class="add">
+        <summary>Đăng mẫu của bạn cho mọi người</summary>
+        <label>Tiêu đề <input id="sTitle"></label>
+        <label>Nội dung <textarea id="sText"></textarea></label>
+        <button class="btn" id="btnPublish" type="button">Đăng mẫu</button>
+      </details>
+    </div>
+  </section>
+
+  <!-- ===== PHẦN 4: PHẢN HỒI ===== -->
+  <section id="y-kien" class="reviews">
+    <div class="inner">
+      <h2>Người dùng nói gì</h2>
+      <div class="review-list">
+        <blockquote><p>Mình từng mất cả tiếng để viết một email xin gia hạn. Giờ chưa đến năm phút là xong.</p><cite>Ngọc Anh, sinh viên năm 3</cite></blockquote>
+        <blockquote><p>Bản song ngữ rất tiện khi gửi email cho đối tác nước ngoài. Mình chỉ chỉnh lại vài chữ.</p><cite>Quốc Bảo, nhân viên kinh doanh</cite></blockquote>
+        <blockquote><p>Phần nhắc việc giúp mình không quên những email còn dang dở.</p><cite>Thu Hà, thực tập sinh</cite></blockquote>
+      </div>
+      <p class="note">Các phản hồi trên là ví dụ minh họa.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>© Thư Chuẩn - Dự án học tập</p>
+    <details>
+      <summary>Quản trị viên</summary>
+      <div id="adminBox"></div>
+    </details>
+  </footer>
+
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="script.js"></script>
+</body>
+</html>
